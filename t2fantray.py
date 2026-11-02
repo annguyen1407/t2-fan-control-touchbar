@@ -20,6 +20,8 @@ CONFIG = "/etc/t2fand.conf"
 HELPER = "/usr/local/libexec/t2fantray-helper"
 PREFS = os.path.expanduser("~/.config/t2fantray/preferences.json")
 AUTOSTART = os.path.expanduser("~/.config/autostart/t2fantray.desktop")
+TOUCHBAR_CONFIG = "/etc/tiny-dfr/config.toml"
+TOUCHBAR_BACKLIGHT_NAMES = ("display-pipe", "228600000.dsi.0", "appletb_backlight")
 
 TEXT = {
     "vi": {
@@ -137,11 +139,26 @@ def fan_readings():
     return readings
 
 
+def touchbar_available():
+    """Show Touch Bar controls only when its backlight and tiny-dfr config exist."""
+    try:
+        backlights = os.listdir("/sys/class/backlight")
+    except OSError:
+        return False
+    has_touchbar = any(
+        marker in name
+        for name in backlights
+        for marker in TOUCHBAR_BACKLIGHT_NAMES
+    )
+    return has_touchbar and os.path.isfile(TOUCHBAR_CONFIG)
+
+
 class T2FanTray:
     def __init__(self):
         self.preferences = load_preferences()
         self.language = self.preferences["language"]
         self.touchbar_enabled = bool(self.preferences["touchbar_enabled"])
+        self.touchbar_available = touchbar_available()
         self.autostart_enabled = os.path.isfile(AUTOSTART)
         self.applying = False
         self.current_full_speed = None
@@ -161,7 +178,8 @@ class T2FanTray:
         self.refresh()
         # The tray app is the feature's enabled state. Keep its Touch Bar
         # controls available while the app runs, even when its window is hidden.
-        self.sync_touchbar_buttons(self.touchbar_enabled)
+        if self.touchbar_available:
+            self.sync_touchbar_buttons(self.touchbar_enabled)
         GLib.timeout_add_seconds(2, self.refresh)
 
     def build_window(self):
@@ -261,17 +279,19 @@ class T2FanTray:
         language_row.get_style_context().add_class("t2-setting-row")
         settings_page.pack_start(language_row, False, False, 0)
 
-        self.touchbar_switch = Gtk.Switch()
         self.autostart_switch = Gtk.Switch()
-        settings_page.pack_start(
-            self.setting_row("touchbar_setting", "touchbar_hint", self.touchbar_switch), False, False, 0
-        )
+        if self.touchbar_available:
+            self.touchbar_switch = Gtk.Switch()
+            settings_page.pack_start(
+                self.setting_row("touchbar_setting", "touchbar_hint", self.touchbar_switch), False, False, 0
+            )
         settings_page.pack_start(
             self.setting_row("autostart_setting", "autostart_hint", self.autostart_switch), False, False, 0
         )
-        self.touchbar_switch.set_active(self.touchbar_enabled)
+        if self.touchbar_available:
+            self.touchbar_switch.set_active(self.touchbar_enabled)
+            self.touchbar_switch.connect("notify::active", self.on_touchbar_setting)
         self.autostart_switch.set_active(self.autostart_enabled)
-        self.touchbar_switch.connect("notify::active", self.on_touchbar_setting)
         self.autostart_switch.connect("notify::active", self.on_autostart_setting)
         self.stack.set_visible_child_name("dashboard")
 
@@ -323,8 +343,9 @@ class T2FanTray:
         self.menu_quit.set_label(t["quit"])
         self.settings_title.set_text(t["settings"])
         self.language_label.set_text(t["language"])
-        self.touchbar_setting_label.set_text(t["touchbar_setting"])
-        self.touchbar_hint_label.set_text(t["touchbar_hint"])
+        if self.touchbar_available:
+            self.touchbar_setting_label.set_text(t["touchbar_setting"])
+            self.touchbar_hint_label.set_text(t["touchbar_hint"])
         self.autostart_setting_label.set_text(t["autostart_setting"])
         self.autostart_hint_label.set_text(t["autostart_hint"])
         self.indicator.set_title(t["title"])
@@ -349,6 +370,8 @@ class T2FanTray:
         self.window.resize(336, 248)
 
     def on_touchbar_setting(self, switch, _param):
+        if not self.touchbar_available:
+            return
         enabled = switch.get_active()
         if enabled == self.touchbar_enabled:
             return
@@ -392,19 +415,22 @@ class T2FanTray:
         self.window.present()
 
     def quit_app(self):
-        try:
-            subprocess.run(
-                ["pkexec", HELPER, "touchbar-hide"],
-                capture_output=True,
-                text=True,
-                timeout=30,
-                check=False,
-            )
-        except (OSError, subprocess.TimeoutExpired):
-            pass
+        if self.touchbar_available:
+            try:
+                subprocess.run(
+                    ["pkexec", HELPER, "touchbar-hide"],
+                    capture_output=True,
+                    text=True,
+                    timeout=30,
+                    check=False,
+                )
+            except (OSError, subprocess.TimeoutExpired):
+                pass
         Gtk.main_quit()
 
     def sync_touchbar_buttons(self, visible):
+        if not self.touchbar_available:
+            return
         operation = "touchbar-show" if visible else "touchbar-hide"
         threading.Thread(
             target=self._sync_touchbar_buttons,

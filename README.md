@@ -1,9 +1,9 @@
-# T2 Fan Control
+# t2-fan-control-linux
 
 [![English](https://img.shields.io/badge/Language-English-2ea44f)](README.md)
 [![Tiếng Việt](https://img.shields.io/badge/Ng%C3%B4n_ng%E1%BB%AF-Ti%E1%BA%BFng_Vi%E1%BB%87t-lightgrey)](docs/README_VI.md)
 
-T2 Fan Control is a small system-tray app for T2 MacBooks running Ubuntu/GNOME. It uses [T2FanRD](https://github.com/GnomedDev/T2FanRD) to switch fan policy and optionally integrates with the Touch Bar through `tiny-dfr`.
+**t2-fan-control-linux** (app name: **T2 Fan Control**) is a small system-tray app for T2 MacBooks running Ubuntu/GNOME. It uses [T2FanRD](https://github.com/GnomedDev/T2FanRD) to switch fan policy and optionally integrates with the Touch Bar through `tiny-dfr`.
 
 Tested setup: Ubuntu 26.04, GNOME 50, Wayland, T2FanRD, and [tiny-dfr v0.3.7](https://github.com/AsahiLinux/tiny-dfr/tree/v0.3.7). Other versions may need adjustments.
 
@@ -12,7 +12,7 @@ Tested setup: Ubuntu 26.04, GNOME 50, Wayland, T2FanRD, and [tiny-dfr v0.3.7](ht
 - Compact dashboard showing each fan's RPM and percentage of its maximum.
 - Switch between T2FanRD's automatic curve and maximum fan speed.
 - White tray icon in Auto, red tray icon in Max.
-- Settings for Vietnamese/English, Touch Bar button visibility, and login autostart.
+- Settings for Vietnamese/English and login autostart. The Touch Bar visibility setting appears only when a Touch Bar backlight and tiny-dfr config are detected.
 - Optional single Touch Bar fan button: white in Auto, red in Max. It sits immediately inside the battery; battery and clock remain at the outside edge.
 - tiny-dfr reloads its config in place when the fan icon changes or the button is shown/hidden. The app does not restart tiny-dfr for these updates.
 - A restricted Polkit helper accepts only `auto`, `max`, `toggle`, `touchbar-show`, and `touchbar-hide` operations.
@@ -22,7 +22,7 @@ Tested setup: Ubuntu 26.04, GNOME 50, Wayland, T2FanRD, and [tiny-dfr v0.3.7](ht
 - T2 MacBook with the `macsmc_hwmon` fan driver.
 - Ubuntu/GNOME, GTK 3, Python GObject, and Ayatana AppIndicator.
 - T2FanRD installed, with `t2fanrd.service` and `/etc/t2fand.conf`.
-- For Touch Bar integration: [tiny-dfr v0.3.7](https://github.com/AsahiLinux/tiny-dfr/tree/v0.3.7) or newer and `/etc/tiny-dfr/config.toml`.
+- For Touch Bar integration: a detected Touch Bar backlight, [tiny-dfr v0.3.7](https://github.com/AsahiLinux/tiny-dfr/tree/v0.3.7) or newer, and `/etc/tiny-dfr/config.toml`.
 
 ## Install
 

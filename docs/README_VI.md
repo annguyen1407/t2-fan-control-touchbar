@@ -1,9 +1,9 @@
-# T2 Fan Control
+# t2-fan-control-linux
 
 [![Tiếng Việt](https://img.shields.io/badge/Ng%C3%B4n_ng%E1%BB%AF-Ti%E1%BA%BFng_Vi%E1%BB%87t-2ea44f)](README_VI.md)
 [![English](https://img.shields.io/badge/Language-English-lightgrey)](../README.md)
 
-**T2 Fan Control** là ứng dụng khay hệ thống nhỏ cho MacBook có chip T2, chạy Ubuntu/GNOME và dùng [T2FanRD](https://github.com/GnomedDev/T2FanRD) để điều khiển quạt. Ứng dụng có dashboard RPM, chế độ Auto/Max, icon khay đổi màu, tùy chọn tự khởi động và tích hợp tùy chọn với Touch Bar qua `tiny-dfr`.
+**t2-fan-control-linux** (tên ứng dụng: **T2 Fan Control**) là ứng dụng khay hệ thống nhỏ cho MacBook có chip T2, chạy Ubuntu/GNOME và dùng [T2FanRD](https://github.com/GnomedDev/T2FanRD) để điều khiển quạt. Ứng dụng có dashboard RPM, chế độ Auto/Max, icon khay đổi màu, tùy chọn tự khởi động và tích hợp tùy chọn với Touch Bar qua `tiny-dfr`.
 
 > Dự án được phát triển cho cấu hình Ubuntu 26.04, GNOME 50, Wayland, T2FanRD và `tiny-dfr`. Các bản phân phối hoặc phiên bản khác có thể cần điều chỉnh.
 
@@ -12,7 +12,7 @@
 - Dashboard gọn hiển thị RPM hiện tại và phần trăm tối đa của từng quạt.
 - Chuyển giữa đường cong tự động của T2FanRD và tốc độ tối đa.
 - Icon khay desktop màu trắng ở Auto, đỏ ở Max.
-- Trang cài đặt chọn tiếng Việt/tiếng Anh, bật/tắt nút Touch Bar và tự khởi động cùng Ubuntu.
+- Trang cài đặt chọn tiếng Việt/tiếng Anh và tự khởi động cùng Ubuntu. Tùy chọn Touch Bar chỉ hiện khi phát hiện đèn nền Touch Bar và cấu hình tiny-dfr.
 - Một nút quạt trên Touch Bar: trắng ở Auto, đỏ ở Max; nằm bên trái pin, còn pin và đồng hồ nằm ở mép ngoài.
 - Cấu hình tiny-dfr được nạp lại trực tiếp khi đổi màu hoặc hiện/ẩn nút; không restart `tiny-dfr` mỗi lần.
 - Dùng Polkit helper chỉ nhận các thao tác giới hạn `auto`, `max`, `toggle`, `touchbar-show`, `touchbar-hide`.
@@ -23,7 +23,7 @@
 - Ubuntu/GNOME; giao diện dùng GTK 3 và Ayatana AppIndicator.
 - [T2FanRD](https://github.com/GnomedDev/T2FanRD) đã cài, với dịch vụ `t2fanrd.service` và `/etc/t2fand.conf`.
 - Python 3, `python3-gi`, Ayatana AppIndicator.
-- Tích hợp Touch Bar: [tiny-dfr v0.3.7](https://github.com/AsahiLinux/tiny-dfr/tree/v0.3.7) trở lên và cấu hình `/etc/tiny-dfr/config.toml`.
+- Tích hợp Touch Bar: phát hiện được đèn nền Touch Bar, [tiny-dfr v0.3.7](https://github.com/AsahiLinux/tiny-dfr/tree/v0.3.7) trở lên và có cấu hình `/etc/tiny-dfr/config.toml`.
 
 ## Cài đặt
 
