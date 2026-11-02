@@ -23,7 +23,7 @@
 - Ubuntu/GNOME; giao diện dùng GTK 3 và Ayatana AppIndicator.
 - [T2FanRD](https://github.com/GnomedDev/T2FanRD) đã cài, với dịch vụ `t2fanrd.service` và `/etc/t2fand.conf`.
 - Python 3, `python3-gi`, Ayatana AppIndicator.
-- Tích hợp Touch Bar: `tiny-dfr` 0.3.7 trở lên và cấu hình `/etc/tiny-dfr/config.toml`.
+- Tích hợp Touch Bar: [tiny-dfr v0.3.7](https://github.com/AsahiLinux/tiny-dfr/tree/v0.3.7) trở lên và cấu hình `/etc/tiny-dfr/config.toml`.
 
 ## Cài đặt
 
@@ -47,7 +47,7 @@ Sau khi cài:
 
 ### 1. Cài tiny-dfr
 
-Cài `tiny-dfr` theo hướng dẫn của T2Linux. Tổ hợp phím trong cấu hình Touch Bar cần tiny-dfr 0.3.7 trở lên. Kiểm tra phiên bản:
+Cài `tiny-dfr` theo hướng dẫn của T2Linux. Tổ hợp phím trong cấu hình Touch Bar cần [tiny-dfr v0.3.7](https://github.com/AsahiLinux/tiny-dfr/tree/v0.3.7) trở lên. Kiểm tra phiên bản:
 
 ```bash
 tiny-dfr --version
@@ -120,7 +120,7 @@ Xem [CONTRIBUTING.md](../CONTRIBUTING.md). Vui lòng không commit thông tin c�
 
 ## Nguồn và ghi nhận
 
-Danh mục nguồn, giấy phép phụ thuộc và ghi nhận artwork đầy đủ nằm trong [THIRD_PARTY.md](../THIRD_PARTY.md).
+Mã nguồn dự án được cấp phép theo [MIT License](../LICENSE). Danh mục nguồn, giấy phép của các phụ thuộc và ghi nhận artwork nằm trong [THIRD_PARTY.md](../THIRD_PARTY.md).
 
 - [T2FanRD](https://github.com/GnomedDev/T2FanRD) — daemon điều khiển quạt mà ứng dụng tích hợp; upstream dùng [GPL-3.0](https://github.com/GnomedDev/T2FanRD/blob/master/LICENCE). T2 Fan Control không chứa mã nguồn T2FanRD.
 - [tiny-dfr](https://github.com/AsahiLinux/tiny-dfr) — daemon Touch Bar mà ứng dụng tích hợp; upstream dùng [MIT](https://github.com/AsahiLinux/tiny-dfr/blob/master/LICENSE). Script tùy chọn build tag [v0.3.7](https://github.com/AsahiLinux/tiny-dfr/tree/v0.3.7).
@@ -132,6 +132,3 @@ Danh mục nguồn, giấy phép phụ thuộc và ghi nhận artwork đầy đ�
 
 Các dự án upstream giữ bản quyền và giấy phép riêng. T2 Fan Control là dự án cộng đồng độc lập, không được T2FanRD, AsahiLinux, T2Linux, GNOME hoặc AyatanaIndicators chứng thực.
 
-## Giấy phép
-
-Chưa gắn giấy phép phát hành. Trước khi public, chọn một license và thêm file `LICENSE`; nếu không có license, người khác không được mặc định quyền sao chép, sửa đổi hoặc phân phối mã nguồn.

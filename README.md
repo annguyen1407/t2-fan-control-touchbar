@@ -5,7 +5,7 @@
 
 T2 Fan Control is a small system-tray app for T2 MacBooks running Ubuntu/GNOME. It uses [T2FanRD](https://github.com/GnomedDev/T2FanRD) to switch fan policy and optionally integrates with the Touch Bar through `tiny-dfr`.
 
-Tested setup: Ubuntu 26.04, GNOME 50, Wayland, T2FanRD, and tiny-dfr 0.3.7. Other versions may need adjustments.
+Tested setup: Ubuntu 26.04, GNOME 50, Wayland, T2FanRD, and [tiny-dfr v0.3.7](https://github.com/AsahiLinux/tiny-dfr/tree/v0.3.7). Other versions may need adjustments.
 
 ## Features
 
@@ -22,7 +22,7 @@ Tested setup: Ubuntu 26.04, GNOME 50, Wayland, T2FanRD, and tiny-dfr 0.3.7. Othe
 - T2 MacBook with the `macsmc_hwmon` fan driver.
 - Ubuntu/GNOME, GTK 3, Python GObject, and Ayatana AppIndicator.
 - T2FanRD installed, with `t2fanrd.service` and `/etc/t2fand.conf`.
-- For Touch Bar integration: tiny-dfr 0.3.7 or newer and `/etc/tiny-dfr/config.toml`.
+- For Touch Bar integration: [tiny-dfr v0.3.7](https://github.com/AsahiLinux/tiny-dfr/tree/v0.3.7) or newer and `/etc/tiny-dfr/config.toml`.
 
 ## Install
 
@@ -38,7 +38,7 @@ After installation, sign out and back in or launch **T2 Fan Control** from the a
 
 ## Touch Bar setup
 
-1. Install tiny-dfr using the T2Linux instructions. The button's key chord requires tiny-dfr 0.3.7 or newer. The optional `update-tiny-dfr.sh` builds official tag v0.3.7 with Cargo and installs a systemd override; it needs network access, build dependencies, Cargo/Git, and sudo. Review that script before running it.
+1. Install tiny-dfr using the T2Linux instructions. The button's key chord requires [tiny-dfr v0.3.7](https://github.com/AsahiLinux/tiny-dfr/tree/v0.3.7) or newer. The optional `update-tiny-dfr.sh` builds official tag v0.3.7 with Cargo and installs a systemd override; it needs network access, build dependencies, Cargo/Git, and sudo. Review that script before running it.
 2. Install the icon files:
 
    ```bash
@@ -85,7 +85,7 @@ See [Troubleshooting](docs/TROUBLESHOOTING.md) for service, shortcut, and Touch 
 
 ## Sources and acknowledgements
 
-The full dependency, license, and artwork notices are in [THIRD_PARTY.md](THIRD_PARTY.md).
+This project is licensed under the [MIT License](LICENSE). Dependency, upstream license, and artwork notices are in [THIRD_PARTY.md](THIRD_PARTY.md).
 
 - [T2FanRD](https://github.com/GnomedDev/T2FanRD) — the fan-control daemon integrated by this app; upstream uses [GPL-3.0](https://github.com/GnomedDev/T2FanRD/blob/master/LICENCE). T2 Fan Control does not contain T2FanRD source code.
 - [tiny-dfr](https://github.com/AsahiLinux/tiny-dfr) — the Touch Bar daemon integrated by this app; upstream uses [MIT](https://github.com/AsahiLinux/tiny-dfr/blob/master/LICENSE). The optional updater builds the [v0.3.7 tag](https://github.com/AsahiLinux/tiny-dfr/tree/v0.3.7).
@@ -97,6 +97,3 @@ The full dependency, license, and artwork notices are in [THIRD_PARTY.md](THIRD_
 
 Upstream projects retain their own copyrights and licenses. T2 Fan Control is an independent community project and is not endorsed by T2FanRD, AsahiLinux, T2Linux, GNOME, or AyatanaIndicators.
 
-## License
-
-No license has been selected yet. Add a `LICENSE` file before publishing if you want to grant others permission to use, modify, or redistribute the code.
