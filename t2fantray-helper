@@ -1,0 +1,207 @@
+#!/usr/bin/python3
+"""Privileged fixed-operation helper for T2FanRD and tiny-dfr."""
+
+import configparser
+import os
+import shutil
+import stat
+import subprocess
+import sys
+import tempfile
+
+
+CONFIG = "/etc/t2fand.conf"
+BACKUP = "/etc/t2fand.conf.before-t2fantray"
+TOUCHBAR_CONFIG = "/etc/tiny-dfr/config.toml"
+
+
+def fail(message):
+    print(message, file=sys.stderr)
+    return 1
+
+
+def replace_touchbar_config(original, updated):
+    try:
+        # tiny-dfr watches this file for IN_CLOSE_WRITE. Keep the inode and
+        # update it in place so tiny-dfr reloads the layer without restarting.
+        with open(TOUCHBAR_CONFIG, "r+", encoding="utf-8") as f:
+            f.seek(0)
+            f.write(updated)
+            f.truncate()
+            f.flush()
+            os.fsync(f.fileno())
+    except OSError:
+        # Restore the previous complete config if the in-place write fails.
+        with open(TOUCHBAR_CONFIG, "w", encoding="utf-8") as f:
+            f.write(original)
+            f.flush()
+            os.fsync(f.fileno())
+        raise
+
+
+def configured_max_mode():
+    parser = configparser.ConfigParser(interpolation=None)
+    with open(CONFIG, encoding="utf-8") as f:
+        parser.read_string(f.read())
+    fans = [section for section in parser.sections() if section.lower().startswith("fan")]
+    return bool(fans) and all(
+        parser.getboolean(section, "always_full_speed", fallback=False) for section in fans
+    )
+
+
+def set_touchbar_buttons(visible):
+    try:
+        with open(TOUCHBAR_CONFIG, encoding="utf-8") as f:
+            original = f.read()
+        start = original.find("MediaLayerKeys = [")
+        if start < 0:
+            return fail("Không tìm thấy MediaLayerKeys trong tiny-dfr config.")
+        end = original.find("\n]", start)
+        if end < 0:
+            return fail("Không tìm thấy cuối danh sách MediaLayerKeys.")
+
+        block = original[start:end]
+        lines = block.splitlines()
+        lines = [
+            line for line in lines
+            if 'Icon = "fan_auto_white"' not in line
+            and 'Icon = "fan_max_red"' not in line
+            and "T2 Fan Control touchbar mode buttons" not in line
+        ]
+        if visible:
+            icon = "fan_max_red" if configured_max_mode() else "fan_auto_white"
+            fan_line = f'    {{ Icon = "{icon}", Action = ["LeftCtrl", "LeftShift", "F11"] }},'
+            # tiny-dfr draws the MediaLayerKeys in config order. Keep Battery
+            # and Time at the outside edge and place the optional fan just
+            # inside the battery, regardless of app start/stop cycles.
+            insert_at = next(
+                (i for i, line in enumerate(lines) if "Battery =" in line),
+                next((i for i, line in enumerate(lines) if "Time =" in line), len(lines)),
+            )
+            previous = insert_at - 1
+            while previous >= 0 and (not lines[previous].strip() or lines[previous].lstrip().startswith("#")):
+                previous -= 1
+            if previous >= 0 and not lines[previous].rstrip().endswith(","):
+                lines[previous] = lines[previous].rstrip() + ","
+            lines.insert(insert_at, fan_line)
+        updated = original[:start] + "\n".join(lines) + original[end:]
+        if updated != original:
+            replace_touchbar_config(original, updated)
+        return 0
+    except (OSError, subprocess.SubprocessError, subprocess.TimeoutExpired) as exc:
+        return fail(str(exc))
+
+
+def update_touchbar_icon(full_speed):
+    try:
+        with open(TOUCHBAR_CONFIG, encoding="utf-8") as f:
+            original = f.read()
+        start = original.find("MediaLayerKeys = [")
+        if start < 0:
+            return 0
+        end = original.find("\n]", start)
+        if end < 0:
+            return 0
+
+        icon = "fan_max_red" if full_speed else "fan_auto_white"
+        block = original[start:end]
+        updated_block = block.replace('Icon = "fan_auto_white"', f'Icon = "{icon}"')
+        updated_block = updated_block.replace('Icon = "fan_max_red"', f'Icon = "{icon}"')
+        updated = original[:start] + updated_block + original[end:]
+        if updated != original:
+            replace_touchbar_config(original, updated)
+        return 0
+    except (OSError, subprocess.SubprocessError, subprocess.TimeoutExpired) as exc:
+        # Do not report fan mode as failed after T2FanRD already accepted it.
+        print(f"Cảnh báo: không cập nhật được icon Touch Bar: {exc}", file=sys.stderr)
+        return 0
+
+
+def main():
+    if os.geteuid() != 0:
+        return fail("Cần quyền quản trị để cập nhật cấu hình T2FanRD.")
+    if len(sys.argv) != 2:
+        return fail("Thiếu thao tác.")
+    operation = sys.argv[1]
+    if operation in ("touchbar-show", "touchbar-hide"):
+        return set_touchbar_buttons(operation == "touchbar-show")
+    if operation not in ("max", "auto", "toggle"):
+        return fail("Tham số hợp lệ: max, auto, toggle, touchbar-show hoặc touchbar-hide.")
+    parser = configparser.ConfigParser(interpolation=None)
+    try:
+        with open(CONFIG, encoding="utf-8") as f:
+            original_content = f.read()
+            parser.read_string(original_content)
+        fans = [section for section in parser.sections() if section.lower().startswith("fan")]
+        if not fans:
+            return fail("Không tìm thấy cấu hình Fan trong /etc/t2fand.conf.")
+        current_max = all(
+            parser.getboolean(section, "always_full_speed", fallback=False)
+            for section in fans
+        )
+        mode = ("auto" if current_max else "max") if operation == "toggle" else operation
+        for section in fans:
+            parser[section]["always_full_speed"] = "true" if mode == "max" else "false"
+
+        original_stat = os.stat(CONFIG)
+        if not os.path.exists(BACKUP):
+            shutil.copy2(CONFIG, BACKUP)
+
+        fd, temp_path = tempfile.mkstemp(prefix=".t2fantray-", dir="/etc", text=True)
+        try:
+            with os.fdopen(fd, "w", encoding="utf-8") as f:
+                parser.write(f)
+                f.flush()
+                os.fsync(f.fileno())
+            os.chmod(temp_path, stat.S_IMODE(original_stat.st_mode))
+            os.chown(temp_path, original_stat.st_uid, original_stat.st_gid)
+            os.replace(temp_path, CONFIG)
+        finally:
+            if os.path.exists(temp_path):
+                os.unlink(temp_path)
+
+        # A few quick mode changes can hit systemd's start limit even though
+        # t2fanrd started successfully. Clear that transient counter before
+        # applying the new configuration and restarting the daemon.
+        reset = subprocess.run(
+            ["systemctl", "reset-failed", "t2fanrd.service"],
+            capture_output=True,
+            text=True,
+            timeout=15,
+            check=False,
+        )
+        if reset.returncode:
+            return fail(reset.stderr.strip() or "Không thể xoá trạng thái lỗi của t2fanrd.service.")
+
+        result = subprocess.run(
+            ["systemctl", "restart", "t2fanrd.service"],
+            capture_output=True,
+            text=True,
+            timeout=30,
+            check=False,
+        )
+        if result.returncode:
+            # Restore the state from immediately before this click. BACKUP is
+            # a one-time user recovery copy and may be stale after later mode
+            # changes, so it must not be used for transactional rollback.
+            with open(CONFIG, "w", encoding="utf-8") as f:
+                f.write(original_content)
+                f.flush()
+                os.fsync(f.fileno())
+            subprocess.run(
+                ["systemctl", "reset-failed", "t2fanrd.service"],
+                timeout=15,
+                check=False,
+            )
+            subprocess.run(["systemctl", "restart", "t2fanrd.service"], timeout=30, check=False)
+            return fail(result.stderr.strip() or "Không thể khởi động lại t2fanrd.service.")
+
+        update_touchbar_icon(mode == "max")
+
+        return 0
+    except (OSError, configparser.Error, subprocess.TimeoutExpired) as exc:
+        return fail(str(exc))
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
