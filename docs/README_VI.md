@@ -3,9 +3,9 @@
 [![Tiếng Việt](https://img.shields.io/badge/Ng%C3%B4n_ng%E1%BB%AF-Ti%E1%BA%BFng_Vi%E1%BB%87t-2ea44f)](README_VI.md)
 [![English](https://img.shields.io/badge/Language-English-lightgrey)](../README.md)
 
-**Simple Fan Control for T2Linux with Touch Bar** (tên ứng dụng: **T2 Fan Control**) là ứng dụng khay hệ thống nhỏ cho MacBook có chip T2, chạy Ubuntu/GNOME và dùng [T2FanRD](https://github.com/GnomedDev/T2FanRD) để điều khiển quạt. Ứng dụng có dashboard RPM, chế độ Auto/Max, icon khay đổi màu, tùy chọn tự khởi động và tích hợp tùy chọn với Touch Bar qua `tiny-dfr`.
+**Simple Fan Control for T2Linux with Touch Bar** (tên ứng dụng: **T2 Fan Control**) là ứng dụng khay hệ thống nhỏ cho MacBook có chip T2, chạy bản phân phối Linux có T2Linux stack và dùng [T2FanRD](https://github.com/GnomedDev/T2FanRD) để điều khiển quạt. Ứng dụng có dashboard RPM, chế độ Auto/Max, icon khay đổi màu, tùy chọn tự khởi động và tích hợp tùy chọn với Touch Bar qua `tiny-dfr`.
 
-> Dự án được phát triển cho cấu hình Ubuntu 26.04, GNOME 50, Wayland, T2FanRD và `tiny-dfr`. Các bản phân phối hoặc phiên bản khác có thể cần điều chỉnh.
+> Dự án được phát triển cho cấu hình Ubuntu 26.04, GNOME 50, Wayland, T2FanRD và `tiny-dfr`. Các distro khác vẫn có thể chạy nếu có cùng driver, service và dependency của T2Linux.
 
 ## Ảnh giao diện
 
@@ -21,7 +21,7 @@ Dashboard hiển thị hai quạt và chế độ đang chạy. Biểu tượng 
 - Dashboard gọn hiển thị RPM hiện tại và phần trăm tối đa của từng quạt.
 - Chuyển giữa đường cong tự động của T2FanRD và tốc độ tối đa.
 - Icon khay desktop màu trắng ở Auto, đỏ ở Max.
-- Trang cài đặt chọn tiếng Việt/tiếng Anh và tự khởi động cùng Ubuntu. Tùy chọn Touch Bar chỉ hiện khi phát hiện đèn nền Touch Bar và cấu hình tiny-dfr.
+- Trang cài đặt chọn tiếng Việt/tiếng Anh và tự khởi động cùng hệ thống. Tùy chọn Touch Bar chỉ hiện khi phát hiện đèn nền Touch Bar và cấu hình tiny-dfr.
 - Một nút quạt trên Touch Bar: trắng ở Auto, đỏ ở Max; nằm bên trái pin, còn pin và đồng hồ nằm ở mép ngoài.
 - Cấu hình tiny-dfr được nạp lại trực tiếp khi đổi màu hoặc hiện/ẩn nút; không restart `tiny-dfr` mỗi lần.
 - Dùng Polkit helper chỉ nhận các thao tác giới hạn `auto`, `max`, `toggle`, `touchbar-show`, `touchbar-hide`.
@@ -29,7 +29,7 @@ Dashboard hiển thị hai quạt và chế độ đang chạy. Biểu tượng 
 ## Yêu cầu
 
 - MacBook hỗ trợ T2 và driver quạt `macsmc_hwmon`.
-- Ubuntu/GNOME; giao diện dùng GTK 3 và Ayatana AppIndicator.
+- Distro Linux có T2Linux kernel stack, systemd, Polkit, GTK 3, Python GObject và Ayatana AppIndicator. GNOME cần hỗ trợ AppIndicator để hiện icon khay.
 - [T2FanRD](https://github.com/GnomedDev/T2FanRD) đã cài, với dịch vụ `t2fanrd.service` và `/etc/t2fand.conf`.
 - Python 3, `python3-gi`, Ayatana AppIndicator.
 - Tích hợp Touch Bar: phát hiện được đèn nền Touch Bar, [tiny-dfr v0.3.7](https://github.com/AsahiLinux/tiny-dfr/tree/v0.3.7) trở lên và có cấu hình `/etc/tiny-dfr/config.toml`.
@@ -43,6 +43,8 @@ sudo apt update
 sudo apt install python3-gi gir1.2-ayatanaappindicator3-0.1
 sudo bash ./install.sh
 ```
+
+Các lệnh trên dành cho Ubuntu/Debian. Với Fedora, Arch hoặc distro khác, cài package tương đương của GTK 3, PyGObject và Ayatana AppIndicator bằng package manager của distro, sau đó chạy `sudo bash ./install.sh`.
 
 `install.sh` cần chạy qua `sudo` để cài app, helper, desktop entry, autostart và icon hệ thống. Script có thể hỏi bạn có muốn cài quyền Polkit để đổi chế độ không cần nhập mật khẩu không. Nếu từ chối, Polkit sẽ xác thực khi helper được gọi.
 

@@ -11,7 +11,7 @@ dpkg-query -W python3-gi gir1.2-ayatanaappindicator3-0.1
 /usr/local/lib/t2fantray/t2fantray.py
 ```
 
-The tray indicator may also depend on Ubuntu's AppIndicator support in GNOME. Confirm that the application is still running:
+The tray indicator may also depend on AppIndicator support in the selected desktop environment. Confirm that the application is still running:
 
 ```bash
 pgrep -af '/usr/local/lib/t2fantray/t2fantray.py'

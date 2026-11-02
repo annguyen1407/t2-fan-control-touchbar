@@ -3,9 +3,9 @@
 [![English](https://img.shields.io/badge/Language-English-2ea44f)](README.md)
 [![Tiếng Việt](https://img.shields.io/badge/Ng%C3%B4n_ng%E1%BB%AF-Ti%E1%BA%BFng_Vi%E1%BB%87t-lightgrey)](docs/README_VI.md)
 
-**Simple Fan Control for T2Linux with Touch Bar** (app name: **T2 Fan Control**) is a small system-tray app for T2 MacBooks running Ubuntu/GNOME. It uses [T2FanRD](https://github.com/GnomedDev/T2FanRD) to switch fan policy and optionally integrates with the Touch Bar through `tiny-dfr`.
+**Simple Fan Control for T2Linux with Touch Bar** (app name: **T2 Fan Control**) is a small system-tray app for T2 MacBooks running a Linux distribution with the T2Linux stack. It uses [T2FanRD](https://github.com/GnomedDev/T2FanRD) to switch fan policy and optionally integrates with the Touch Bar through `tiny-dfr`.
 
-Tested setup: Ubuntu 26.04, GNOME 50, Wayland, T2FanRD, and [tiny-dfr v0.3.7](https://github.com/AsahiLinux/tiny-dfr/tree/v0.3.7). Other versions may need adjustments.
+Tested setup: Ubuntu 26.04, GNOME 50, Wayland, T2FanRD, and [tiny-dfr v0.3.7](https://github.com/AsahiLinux/tiny-dfr/tree/v0.3.7). Other distributions can work when they provide the same T2Linux drivers, services, and desktop dependencies.
 
 ## Screenshots
 
@@ -29,7 +29,7 @@ The dashboard shows both fans and the active policy. The Touch Bar indicator is 
 ## Requirements
 
 - T2 MacBook with the `macsmc_hwmon` fan driver.
-- Ubuntu/GNOME, GTK 3, Python GObject, and Ayatana AppIndicator.
+- A Linux distribution with the T2Linux kernel stack, systemd, Polkit, GTK 3, Python GObject, and Ayatana AppIndicator. GNOME needs AppIndicator support for the tray icon.
 - T2FanRD installed, with `t2fanrd.service` and `/etc/t2fand.conf`.
 - For Touch Bar integration: a detected Touch Bar backlight, [tiny-dfr v0.3.7](https://github.com/AsahiLinux/tiny-dfr/tree/v0.3.7) or newer, and `/etc/tiny-dfr/config.toml`.
 
@@ -40,6 +40,8 @@ sudo apt update
 sudo apt install python3-gi gir1.2-ayatanaappindicator3-0.1
 sudo bash ./install.sh
 ```
+
+The commands above are for Ubuntu/Debian. On Fedora, Arch, or another distribution, install the equivalent GTK 3, PyGObject, and Ayatana AppIndicator packages with that distribution's package manager, then run `sudo bash ./install.sh`.
 
 The installer places the app, helper, desktop launcher, autostart entry, and icons in system directories. It may ask whether to install the optional Polkit policy that lets the active desktop user change fan mode without a password prompt. If declined, Polkit may ask for authentication when the helper runs.
 
@@ -62,7 +64,7 @@ After installation, sign out and back in or launch **T2 Fan Control** from the a
    | Command | `pkexec /usr/local/libexec/t2fantray-helper toggle` |
    | Shortcut | `Ctrl+Shift+F11` |
 
-   On the tested Ubuntu setup, creating this shortcut in GNOME Settings works reliably. The script installs icons but does not create the shortcut.
+   On the tested GNOME setup, creating this shortcut in GNOME Settings works reliably. The script installs icons but does not create the shortcut.
 
 4. Open T2 Fan Control settings and enable **Touch Bar fan button**. The button appears while the tray app runs, remains when its dashboard is hidden, and is removed when the app exits.
 
