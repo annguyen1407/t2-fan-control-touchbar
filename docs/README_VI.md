@@ -1,11 +1,20 @@
-# t2-fan-control-linux
+# Simple Fan Control for T2Linux with Touch Bar
 
 [![Tiếng Việt](https://img.shields.io/badge/Ng%C3%B4n_ng%E1%BB%AF-Ti%E1%BA%BFng_Vi%E1%BB%87t-2ea44f)](README_VI.md)
 [![English](https://img.shields.io/badge/Language-English-lightgrey)](../README.md)
 
-**t2-fan-control-linux** (tên ứng dụng: **T2 Fan Control**) là ứng dụng khay hệ thống nhỏ cho MacBook có chip T2, chạy Ubuntu/GNOME và dùng [T2FanRD](https://github.com/GnomedDev/T2FanRD) để điều khiển quạt. Ứng dụng có dashboard RPM, chế độ Auto/Max, icon khay đổi màu, tùy chọn tự khởi động và tích hợp tùy chọn với Touch Bar qua `tiny-dfr`.
+**Simple Fan Control for T2Linux with Touch Bar** (tên ứng dụng: **T2 Fan Control**) là ứng dụng khay hệ thống nhỏ cho MacBook có chip T2, chạy Ubuntu/GNOME và dùng [T2FanRD](https://github.com/GnomedDev/T2FanRD) để điều khiển quạt. Ứng dụng có dashboard RPM, chế độ Auto/Max, icon khay đổi màu, tùy chọn tự khởi động và tích hợp tùy chọn với Touch Bar qua `tiny-dfr`.
 
 > Dự án được phát triển cho cấu hình Ubuntu 26.04, GNOME 50, Wayland, T2FanRD và `tiny-dfr`. Các bản phân phối hoặc phiên bản khác có thể cần điều chỉnh.
+
+## Ảnh giao diện
+
+<p align="center">
+  <img src="../assets/screenshots/dashboard-auto.png" alt="Dashboard T2 Fan Control ở chế độ Auto" width="360">
+  <img src="../assets/screenshots/touchbar-max.jpeg" alt="Biểu tượng quạt trên Touch Bar ở chế độ Max" width="360">
+</p>
+
+Dashboard hiển thị hai quạt và chế độ đang chạy. Biểu tượng quạt trên Touch Bar màu trắng ở Auto, đỏ ở Max; ảnh minh họa đang ở Max.
 
 ## Tính năng
 

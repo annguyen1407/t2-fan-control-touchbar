@@ -1,11 +1,20 @@
-# t2-fan-control-linux
+# Simple Fan Control for T2Linux with Touch Bar
 
 [![English](https://img.shields.io/badge/Language-English-2ea44f)](README.md)
 [![Tiếng Việt](https://img.shields.io/badge/Ng%C3%B4n_ng%E1%BB%AF-Ti%E1%BA%BFng_Vi%E1%BB%87t-lightgrey)](docs/README_VI.md)
 
-**t2-fan-control-linux** (app name: **T2 Fan Control**) is a small system-tray app for T2 MacBooks running Ubuntu/GNOME. It uses [T2FanRD](https://github.com/GnomedDev/T2FanRD) to switch fan policy and optionally integrates with the Touch Bar through `tiny-dfr`.
+**Simple Fan Control for T2Linux with Touch Bar** (app name: **T2 Fan Control**) is a small system-tray app for T2 MacBooks running Ubuntu/GNOME. It uses [T2FanRD](https://github.com/GnomedDev/T2FanRD) to switch fan policy and optionally integrates with the Touch Bar through `tiny-dfr`.
 
 Tested setup: Ubuntu 26.04, GNOME 50, Wayland, T2FanRD, and [tiny-dfr v0.3.7](https://github.com/AsahiLinux/tiny-dfr/tree/v0.3.7). Other versions may need adjustments.
+
+## Screenshots
+
+<p align="center">
+  <img src="assets/screenshots/dashboard-auto.png" alt="T2 Fan Control dashboard in Auto mode" width="360">
+  <img src="assets/screenshots/touchbar-max.jpeg" alt="Touch Bar fan indicator in Max mode" width="360">
+</p>
+
+The dashboard shows both fans and the active policy. The Touch Bar indicator is white in Auto and red in Max; this photo shows Max.
 
 ## Features
 
